@@ -35,8 +35,8 @@ jobs:
 
       - name: Package
         run: |
-          cd build/Debug && zip -r ../../build/LucyRTL8125Ethernet-Debug.zip ./*.kext && cd ../..
-          cd build/Release && zip -r ../../build/LucyRTL8125Ethernet-Release.zip ./*.kext && cd ../..
+          cd build/Debug && zip -r ../../build/SimpleRTK5-Debug.zip ./*.kext && cd ../..
+          cd build/Release && zip -r ../../build/SimpleRTK5-Release.zip ./*.kext && cd ../..
         
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v7

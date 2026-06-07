@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  release:
+    types: [published]
+    
+permissions:
+  contents: write
+
+env:
+  PROJECT_TYPE: KEXT
+  ACID32: 1
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-latest
+    env:
+      JOB_TYPE: BUILD
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: acidanthera/MacKernelSDK
+          path: MacKernelSDK
+      - name: CI Bootstrap
+        run: |
+          src=$(/usr/bin/curl -Lfs https://raw.githubusercontent.com/acidanthera/ocbuild/master/ci-bootstrap.sh) && eval "$src" || exit 1
+
+      - run: xcodebuild -jobs 1 -arch x86_64 -arch ACID32 -configuration Debug
+      - run: xcodebuild -jobs 1 -arch x86_64 -arch ACID32 -configuration Release
+
+      - name: Package
+        run: |
+          cd build/Debug && zip -r ../../build/LucyRTL8125Ethernet-Debug.zip ./*.kext && cd ../..
+          cd build/Release && zip -r ../../build/LucyRTL8125Ethernet-Release.zip ./*.kext && cd ../..
+        
+      - name: Upload to Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: Artifacts
+          path: build/*.zip
+          
+      - name: Upload to Release
+        if: github.event_name == 'release'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/*.zip
+          tag: ${{ github.ref }}
+          file_glob: true

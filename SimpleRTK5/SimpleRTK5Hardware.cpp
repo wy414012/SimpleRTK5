@@ -124,10 +124,10 @@ void SimpleRTK5::setupASPM(IOPCIDevice *provider, bool allowL1) {
 
         if (enableASPM && (pcieLinkCap & kIOPCIELinkCapASPMCompl)) {
             if (pcieLinkCap & kIOPCIELinkCapL0sSup)
-                aspmState |= kIOPCILinkControlASPMBitsL0s;
+                aspmState |= kIOPCIELinkCtlL0s;
 
             if ((pcieLinkCap & kIOPCIELinkCapL1Sup) && allowL1)
-                aspmState |= kIOPCILinkControlASPMBitsL1;
+                aspmState |= kIOPCIELinkCtlL1;
 
             IOLog("SimpleRTK5: Enable PCIe ASPM: 0x%08x.\n", aspmState);
         } else {
